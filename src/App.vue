@@ -1,23 +1,54 @@
 <template>
-  <div id="app">
+  <v-app>
     <Header />
-    <DashBoard />
-  </div>
+    <v-container>
+      <DashBoard />
+    </v-container>
+  </v-app>
 </template>
 
 <script>
-import DashBoard from "./components/DashBoard.vue";
 import Header from "./components/Header";
+import DashBoard from "./components/DashBoard";
 
 export default {
   name: "App",
+
   components: {
-    Header,
-    DashBoard
-  }
+    DashBoard,
+    Header
+  },
+
+  data: () => ({
+    //
+  })
 };
 </script>
 
 <style lang="scss">
+@import "assets/main";
+.v-menu__content {
+  min-width: 56px !important;
+  border-radius: 8px;
+  .v-list-item {
+    &:before {
+      background: none;
+    }
+  }
 
+  .v-list {
+    .primary--text {
+      color: $color_fiolet !important;
+    }
+  }
+
+  .v-list-item__title {
+    text-align: center;
+    font-size: 18px;
+    &:hover {
+      color: $color_fiolet !important;
+      background: none;
+    }
+  }
+}
 </style>

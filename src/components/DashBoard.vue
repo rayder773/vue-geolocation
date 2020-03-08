@@ -2,25 +2,18 @@
   <div class="dashboard">
     <div class="container">
       <div class="dashboard-wrapper">
-        <form @submit.prevent="submit">
-          <div class="form-group" :class="{ 'form-group--error': $v.name.$error }">
-            <label class="form__label">Name</label>
-            <input class="form__input" v-model.trim="$v.name.$model"/>
-          </div>
-          <div class="error" v-if="!$v.name.required">Name is required</div>
-          <div class="error" v-if="!$v.name.minLength">Name must have at least {{$v.name.$params.minLength.min}} letters.</div>
-          <button class="button" type="submit" :disabled="submitStatus === 'PENDING'">Submit!</button>
-        </form>
+        <div class="d-flex flex-column">
+          <div>{{ $t("ip") }}</div>
+          <input v-model.trim="ip" class="dashboard-wrapper-input" />
+          <button @click="getInfo">{{ $t("information") }}</button>
+        </div>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
 import gql from "graphql-tag";
-import { required, minLength } from 'vuelidate/lib/validators'
-
 
 export default {
   name: "DashBoard",
@@ -39,32 +32,12 @@ export default {
       }
     `
   },
-  data() {
-    return {
-      name: '',
-      age: 0,
-      submitStatus: null
-    }
-  },
-  validations: {
-    name: {
-      required,
-      minLength: minLength(4)
-    }
-  },
+  data: () => ({
+    ip: ""
+  }),
   methods: {
-    submit() {
-      console.log('submit!')
-      this.$v.$touch()
-      if (this.$v.$invalid) {
-        this.submitStatus = 'ERROR'
-      } else {
-        // do your submit logic here
-        this.submitStatus = 'PENDING'
-        setTimeout(() => {
-          this.submitStatus = 'OK'
-        }, 500)
-      }
+    getInfo() {
+      console.log(this.ip);
     }
   }
 };
@@ -72,12 +45,38 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-  .dashboard-wrapper {
-    background: #FFFFFF;
-    box-shadow: 0px 0px 50px rgba(230, 230, 230, 0.8);
-    min-height: 619px;
-    width: 936px;
-    margin: 57px auto 0;
-    padding: 48px;
+@import "../assets/main";
+.dashboard-wrapper {
+  background: #ffffff;
+  box-shadow: 0px 0px 50px rgba(230, 230, 230, 0.8);
+  min-height: 619px;
+  max-width: 936px;
+  margin: 57px auto 0;
+  padding: 48px;
+
+  &-input {
+    border: 1px solid #cccccc;
+    box-sizing: border-box;
+    border-radius: 8px;
+    height: 45px;
+    max-width: 396px;
+    padding-left: 18px;
+    outline: none;
+    margin: 8px 0 18px;
   }
+
+  button {
+    background: $color_red;
+    opacity: 0.85;
+    height: 48px;
+    max-width: 256px;
+    border-radius: 8px;
+    color: white;
+    outline: none;
+
+    &:hover {
+      background: $color_red_hover;
+    }
+  }
+}
 </style>

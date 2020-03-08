@@ -2,11 +2,15 @@
   <div class="header">
     <div class="container header-selector-wrapper">
       <h2>GeoIP</h2>
-      <select v-model="$i18n.locale">
-        <option v-for="(lang, i) in langs" :key="`Lang${i}`" :value="lang">{{
-          lang
-        }}</option>
-      </select>
+      <div class="selector">
+        <v-select
+          :items="langs"
+          @change="changLang"
+          outlined
+          :value="this.$i18n.locale.toUpperCase()"
+        >
+        </v-select>
+      </div>
     </div>
   </div>
 </template>
@@ -15,13 +19,18 @@
 export default {
   name: "Header",
   data() {
-    return { langs: ["ru", "en"] };
+    return { langs: ["RU", "EN"] };
+  },
+  methods: {
+    changLang(lang) {
+      this.$i18n.locale = lang.toLowerCase();
+    }
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss">
 @import "../assets/main";
 .header {
   /*height: 48px;*/
@@ -38,11 +47,40 @@ export default {
       font-weight: bold;
     }
 
-    select {
+    .selector {
       position: absolute;
       right: 0;
       top: 0;
+
+      .primary--text {
+        caret-color: white !important;
+        color: white !important;
+      }
+
+      .v-select__selection {
+        color: white !important;
+      }
+
+      .v-input {
+        max-width: 70px;
+      }
+
+      fieldset {
+        border: none !important;
+      }
+      .v-input__icon {
+        position: absolute;
+        left: 12px;
+      }
+
+      .v-icon {
+        color: white;
+      }
     }
   }
+
+
 }
+
+
 </style>
