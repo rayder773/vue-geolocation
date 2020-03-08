@@ -2,10 +2,34 @@
   <div class="dashboard">
     <div class="container">
       <div class="dashboard-wrapper">
-        <div class="d-flex flex-column">
+        <div class="d-flex flex-column dashboard-wrapper-block">
           <div>{{ $t("ip") }}</div>
+          <div v-show="loading">loading</div>
+          <div v-show="error">{{ error }}</div>
           <input v-model.trim="ip" class="dashboard-wrapper-input" />
           <button @click="getInfo">{{ $t("information") }}</button>
+                    <button @click="showInfo">Click</button>
+        </div>
+        <div class="d-flex flex-column">
+          <div>{{ $t("result") }}</div>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">ip</th>
+                  <th class="text-left">continent</th>
+                  <th class="text-left">country</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in info" :key="item.ip">
+                  <td>{{ item.ip}}</td>
+                  <td>{{ item.continent}}</td>
+                  <td>{{ item.country}}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
         </div>
       </div>
     </div>
@@ -15,29 +39,84 @@
 <script>
 import gql from "graphql-tag";
 
+const GET_GEO = gql`
+  query($ip: String!) {
+    ipAddress(address: $ip) {
+      country {
+        alpha2Code
+        name
+        continent {
+          name
+        }
+      }
+      city {
+        name
+        location {
+          lat
+          long
+        }
+      }
+    }
+  }
+`;
+
 export default {
   name: "DashBoard",
   props: {
     msg: String
   },
-  apollo: {
-    // Simple query that will update the 'hello' vue property
-    hello: gql`
-      query {
-        ipAddress(address: "189.59.228.170") {
-          city {
-            name
-          }
-        }
-      }
-    `
-  },
+  // apollo: {
+  //   info: {
+  //     query: GET_GEO,
+  //     manual: true,
+  //     variables() {
+  //       return {
+  //         ip: this.ip,
+  //       }
+  //     },
+  //     result ({ data }) {
+  //       console.log('hello')
+  //       this.info = data;
+  //       this.$apollo.queries.info.stop();
+  //     },
+  //     error (error) {
+  //       this.error = error;
+  //     },
+  //     watchLoading(isLoading) {
+  //       this.loading = isLoading;
+  //     },
+  //     skip: true,
+  //   }
+  // },
   data: () => ({
-    ip: ""
+    ip: "",
+    info: [],
+    loading: false,
+    error: "",
+
   }),
   methods: {
-    getInfo() {
-      console.log(this.ip);
+    async getInfo() {
+      this.info = [];
+      await this.$apollo
+        .query({
+          query: GET_GEO,
+          variables: {
+            ip: this.ip
+          }
+        })
+        .then(({ data: { ipAddress } }) => {
+          console.log(ipAddress)
+          this.info.push({
+            ip: this.ip,
+            continent: ipAddress.country.continent.name,
+            country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`,
+          });
+        })
+        .catch(err => (this.error = err));
+    },
+    showInfo() {
+      console.log(this.info);
     }
   }
 };
@@ -53,6 +132,10 @@ export default {
   max-width: 936px;
   margin: 57px auto 0;
   padding: 48px;
+
+  &-block {
+    margin-bottom: 48px;
+  }
 
   &-input {
     border: 1px solid #cccccc;
