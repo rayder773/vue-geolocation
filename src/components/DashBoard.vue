@@ -8,10 +8,10 @@
           <div v-show="error">{{ error }}</div>
           <input v-model.trim="ip" class="dashboard-wrapper-input" />
           <button @click="getInfo">{{ $t("information") }}</button>
-<!--          <button @click="showInfo">Click</button>-->
+          <!--          <button @click="showInfo">Click</button>-->
         </div>
-        <div class="d-flex flex-column">
-          <div>{{ $t("result") }}</div>
+        <div class="d-flex flex-column dashboard-wrapper-block">
+          <div class="dashboard-wrapper-header">{{ $t("result") }}</div>
           <v-simple-table>
             <template v-slot:default>
               <thead>
@@ -38,7 +38,7 @@
           </v-simple-table>
         </div>
         <div class="d-flex flex-column" style="max-width: 396px">
-          <div>{{ $t("history") }}</div>
+          <div class="dashboard-wrapper-header">{{ $t("history") }}</div>
           <v-simple-table>
             <template v-slot:default>
               <thead>
@@ -49,22 +49,28 @@
                 </tr>
               </thead>
               <tbody v-if="history.length">
-              <tr v-for="(item, i) in history" :key="item.ip + i">
-                <td>{{ item.ip }}</td>
-                <td>{{ item.continent }}</td>
-                <td>{{ item.country }}</td>
-              </tr>
+                <tr v-for="(item, i) in history" :key="item.ip + i">
+                  <td>{{ item.ip }}</td>
+                  <td>{{ item.continent }}</td>
+                  <td>{{ item.country }}</td>
+                </tr>
               </tbody>
               <tbody v-else>
                 <tr>
-                  <td>{{ info.ip }}</td>
+                  <td>{{ historyInitial.ip }}</td>
                   <td>-</td>
                   <td>-</td>
                 </tr>
               </tbody>
             </template>
           </v-simple-table>
-          <button @click="cleanHistory">{{ $t("history_clean") }}</button>
+          <button
+            @click="cleanHistory"
+            :disabled="!history.length"
+            class="dashboard-wrapper-clear-history-btn"
+          >
+            {{ $t("history_clean") }}
+          </button>
         </div>
       </div>
     </div>
@@ -74,7 +80,7 @@
 <script>
 import gql from "graphql-tag";
 import { mapState, mapMutations } from "vuex";
-import {IP_PLACEHOLDER} from "../constant";
+import { IP_PLACEHOLDER } from "../constant";
 const GET_GEO = gql`
   query($ip: String!) {
     ipAddress(address: $ip) {
@@ -105,7 +111,7 @@ export default {
   data: () => ({
     ip: "",
     info: { ip: IP_PLACEHOLDER },
-    // info: [{ ip: "000 000 00" }],
+    historyInitial: { ip: IP_PLACEHOLDER },
     loading: false,
     error: ""
   }),
@@ -132,7 +138,6 @@ export default {
           // });
 
           this.info = {
-
             ip: this.ip,
             continent: ipAddress.country.continent.name,
             country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`,
@@ -165,6 +170,10 @@ export default {
   margin: 57px auto 0;
   padding: 48px;
 
+  &-header {
+    margin-bottom: 8px;
+  }
+
   &-block {
     margin-bottom: 48px;
   }
@@ -181,6 +190,18 @@ export default {
 
     &:focus {
       border: 1px $color_fiolet solid;
+    }
+  }
+
+  &-clear-history-btn {
+    margin-top: 18px;
+
+    &:disabled {
+      background: $color_grey;
+
+      &:hover {
+        background: $color_grey;
+      }
     }
   }
 

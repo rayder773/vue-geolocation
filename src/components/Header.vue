@@ -50,7 +50,7 @@ export default {
     .selector {
       position: absolute;
       right: 0;
-      top: 0;
+      top: 8px;
 
       .primary--text {
         caret-color: white !important;
@@ -70,7 +70,7 @@ export default {
       }
       .v-input__icon {
         position: absolute;
-        left: 12px;
+        left: 20px;
       }
 
       .v-icon {
