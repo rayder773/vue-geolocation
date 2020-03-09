@@ -8,7 +8,7 @@
           <div v-show="error">{{ error }}</div>
           <input v-model.trim="ip" class="dashboard-wrapper-input" />
           <button @click="getInfo">{{ $t("information") }}</button>
-                    <button @click="showInfo">Click</button>
+<!--          <button @click="showInfo">Click</button>-->
         </div>
         <div class="d-flex flex-column">
           <div>{{ $t("result") }}</div>
@@ -16,20 +16,55 @@
             <template v-slot:default>
               <thead>
                 <tr>
-                  <th class="text-left">ip</th>
-                  <th class="text-left">continent</th>
-                  <th class="text-left">country</th>
+                  <th class="text-left">{{ $t("ip") }}</th>
+                  <th class="text-left">{{ $t("continent") }}</th>
+                  <th class="text-left">{{ $t("country") }}</th>
+                  <th class="text-left">{{ $t("city") }}</th>
+                  <th class="text-left">{{ $t("postalIndex") }}</th>
+                  <th class="text-left">{{ $t("coordinates") }}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in info" :key="item.ip">
-                  <td>{{ item.ip}}</td>
-                  <td>{{ item.continent}}</td>
-                  <td>{{ item.country}}</td>
+                <tr>
+                  <td>{{ info.ip }}</td>
+                  <td>{{ info.continent }}</td>
+                  <td>{{ info.country }}</td>
+                  <td>{{ info.city }}</td>
+                  <td>{{ info.postalCode }}</td>
+                  <td>{{ info.coordinates }}</td>
                 </tr>
               </tbody>
             </template>
           </v-simple-table>
+        </div>
+        <div class="d-flex flex-column" style="max-width: 396px">
+          <div>{{ $t("history") }}</div>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">{{ $t("ip") }}</th>
+                  <th class="text-left">{{ $t("country") }}</th>
+                  <th class="text-left">{{ $t("city") }}</th>
+                </tr>
+              </thead>
+              <tbody v-if="history.length">
+              <tr v-for="(item, i) in history" :key="item.ip + i">
+                <td>{{ item.ip }}</td>
+                <td>{{ item.continent }}</td>
+                <td>{{ item.country }}</td>
+              </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td>{{ info.ip }}</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+          <button @click="cleanHistory">{{ $t("history_clean") }}</button>
         </div>
       </div>
     </div>
@@ -38,7 +73,8 @@
 
 <script>
 import gql from "graphql-tag";
-
+import { mapState, mapMutations } from "vuex";
+import {IP_PLACEHOLDER} from "../constant";
 const GET_GEO = gql`
   query($ip: String!) {
     ipAddress(address: $ip) {
@@ -65,39 +101,21 @@ export default {
   props: {
     msg: String
   },
-  // apollo: {
-  //   info: {
-  //     query: GET_GEO,
-  //     manual: true,
-  //     variables() {
-  //       return {
-  //         ip: this.ip,
-  //       }
-  //     },
-  //     result ({ data }) {
-  //       console.log('hello')
-  //       this.info = data;
-  //       this.$apollo.queries.info.stop();
-  //     },
-  //     error (error) {
-  //       this.error = error;
-  //     },
-  //     watchLoading(isLoading) {
-  //       this.loading = isLoading;
-  //     },
-  //     skip: true,
-  //   }
-  // },
+  computed: mapState(["history"]),
   data: () => ({
     ip: "",
-    info: [],
+    info: { ip: IP_PLACEHOLDER },
+    // info: [{ ip: "000 000 00" }],
     loading: false,
-    error: "",
-
+    error: ""
   }),
+  created() {
+    // postalCodes = new PostalCodes();
+  },
   methods: {
+    ...mapMutations(["addToHistory", "cleanHistory"]),
     async getInfo() {
-      this.info = [];
+      // this.info = [];
       await this.$apollo
         .query({
           query: GET_GEO,
@@ -106,12 +124,26 @@ export default {
           }
         })
         .then(({ data: { ipAddress } }) => {
-          console.log(ipAddress)
-          this.info.push({
+          console.log(ipAddress);
+          // this.info.push({
+          //   ip: this.ip,
+          //   continent: ipAddress.country.continent.name,
+          //   country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`
+          // });
+
+          this.info = {
+
             ip: this.ip,
             continent: ipAddress.country.continent.name,
             country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`,
-          });
+            city: ipAddress.city.name,
+            postalCode: "",
+            coordinates: `${ipAddress.city.location.lat.toFixed(
+              1
+            )}/${ipAddress.city.location.long.toFixed(1)}`
+          };
+          this.addToHistory(this.info);
+          // this.addToHistory(this.info);
         })
         .catch(err => (this.error = err));
     },
@@ -123,7 +155,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss">
 @import "../assets/main";
 .dashboard-wrapper {
   background: #ffffff;
@@ -138,7 +170,7 @@ export default {
   }
 
   &-input {
-    border: 1px solid #cccccc;
+    border: 1px solid $color_border;
     box-sizing: border-box;
     border-radius: 8px;
     height: 45px;
@@ -146,6 +178,10 @@ export default {
     padding-left: 18px;
     outline: none;
     margin: 8px 0 18px;
+
+    &:focus {
+      border: 1px $color_fiolet solid;
+    }
   }
 
   button {
@@ -159,6 +195,35 @@ export default {
 
     &:hover {
       background: $color_red_hover;
+    }
+  }
+
+  .v-data-table {
+    &__wrapper {
+      border-radius: 8px;
+    }
+
+    table {
+      border: 1px solid $color_border;
+      box-sizing: border-box;
+      border-radius: 8px;
+    }
+
+    thead {
+      background: $color_fiolet;
+    }
+
+    td {
+      border-right: 1px solid $color_border;
+      color: #969696;
+      text-align: center;
+      &:last-child {
+        border: none;
+      }
+    }
+    th {
+      text-align: center !important;
+      color: white !important;
     }
   }
 }

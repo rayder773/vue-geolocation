@@ -2,6 +2,12 @@
   "message": "test",
   "ip": "IP Address",
   "information": "Get information",
-  "history": "Clear history",
-  "result": "Result"
+  "history_clean": "Clear history",
+  "result": "Result",
+  "history": "history",
+  "continent": "Continent/code",
+  "country": "Country/code",
+  "city": "City",
+  "postalIndex": " Postcode",
+  "coordinates": "Coordinates"
 }
