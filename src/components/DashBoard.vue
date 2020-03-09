@@ -3,12 +3,27 @@
     <div class="container">
       <div class="dashboard-wrapper">
         <div class="d-flex flex-column dashboard-wrapper-block">
-          <div>{{ $t("ip") }}</div>
-          <div v-show="loading">loading</div>
-          <div v-show="error">{{ error }}</div>
-          <input v-model.trim="ip" class="dashboard-wrapper-input" />
+          <div class="dashboard-wrapper-label-container">
+            <div>{{ $t("ip") }}</div>
+            <div v-show="error" class="dashboard-wrapper-label-container-error">
+              {{ error }}
+            </div>
+          </div>
+          <div class="d-flex align-center">
+            <input
+              v-model.trim="ip"
+              class="dashboard-wrapper-input"
+              :style="{ borderColor: error && '#FF6C6C' }"
+            />
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              class="ml-6"
+              v-show="loading"
+            ></v-progress-circular>
+          </div>
+
           <button @click="getInfo">{{ $t("information") }}</button>
-          <!--          <button @click="showInfo">Click</button>-->
         </div>
         <div class="d-flex flex-column dashboard-wrapper-block">
           <div class="dashboard-wrapper-header">{{ $t("result") }}</div>
@@ -26,12 +41,16 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>{{ info.ip }}</td>
-                  <td>{{ info.continent }}</td>
-                  <td>{{ info.country }}</td>
-                  <td>{{ info.city }}</td>
-                  <td>{{ info.postalCode }}</td>
-                  <td>{{ info.coordinates }}</td>
+                  <td>{{ !info.ip || error ? "-" : info.ip }}</td>
+                  <td>{{ !info.continent || error ? "-" : info.continent }}</td>
+                  <td>{{ !info.country || error ? "-" : info.country }}</td>
+                  <td>{{ !info.city || error ? "-" : info.city }}</td>
+                  <td>
+                    {{ !info.postalCode || error ? "-" : info.postalCode }}
+                  </td>
+                  <td>
+                    {{ !info.coordinates || error ? "-" : info.coordinates }}
+                  </td>
                 </tr>
               </tbody>
             </template>
@@ -115,13 +134,10 @@ export default {
     loading: false,
     error: ""
   }),
-  created() {
-    // postalCodes = new PostalCodes();
-  },
   methods: {
     ...mapMutations(["addToHistory", "cleanHistory"]),
     async getInfo() {
-      // this.info = [];
+      this.loading = true;
       await this.$apollo
         .query({
           query: GET_GEO,
@@ -131,29 +147,29 @@ export default {
         })
         .then(({ data: { ipAddress } }) => {
           console.log(ipAddress);
-          // this.info.push({
-          //   ip: this.ip,
-          //   continent: ipAddress.country.continent.name,
-          //   country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`
-          // });
-
           this.info = {
             ip: this.ip,
-            continent: ipAddress.country.continent.name,
+            continent: ipAddress.country.continent
+              ? ipAddress.country.continent.name
+              : "-",
             country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`,
-            city: ipAddress.city.name,
+            city: ipAddress.city ? ipAddress.city.name : "-",
             postalCode: "",
-            coordinates: `${ipAddress.city.location.lat.toFixed(
-              1
-            )}/${ipAddress.city.location.long.toFixed(1)}`
+            coordinates: ipAddress.city
+              ? `${ipAddress.city.location.lat.toFixed(
+                  1
+                )}/${ipAddress.city.location.long.toFixed(1)}`
+              : ""
           };
           this.addToHistory(this.info);
-          // this.addToHistory(this.info);
+          this.error = "";
+          this.loading = false;
         })
-        .catch(err => (this.error = err));
-    },
-    showInfo() {
-      console.log(this.info);
+        .catch(err => {
+          console.log(err);
+          this.error = err;
+          this.loading = false;
+        });
     }
   }
 };
@@ -178,12 +194,24 @@ export default {
     margin-bottom: 48px;
   }
 
+  &-label-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+
+    &-error {
+      margin-left: 8px;
+      color: red;
+    }
+  }
+
   &-input {
     border: 1px solid $color_border;
     box-sizing: border-box;
     border-radius: 8px;
     height: 45px;
-    max-width: 396px;
+    width: 396px;
     padding-left: 18px;
     outline: none;
     margin: 8px 0 18px;

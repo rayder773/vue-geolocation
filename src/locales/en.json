@@ -8,6 +8,6 @@
   "continent": "Continent/code",
   "country": "Country/code",
   "city": "City",
-  "postalIndex": " Postcode",
+  "postalIndex": "Postal code",
   "coordinates": "Coordinates"
 }

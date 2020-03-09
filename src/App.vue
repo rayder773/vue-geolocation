@@ -30,8 +30,8 @@ export default {
 .v-menu__content {
   min-width: 56px !important;
   border-radius: 8px;
-  top: 52px !important;
-  left: 942px !important;
+  /*top: 40px !important;*/
+  /*left: 942px !important;*/
   .v-list-item {
     &:before {
       background: none;

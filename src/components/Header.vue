@@ -39,6 +39,7 @@ export default {
 
   &-selector-wrapper {
     position: relative;
+    padding: 0 !important;
     h2 {
       line-height: 48px;
       margin: 0;
@@ -50,7 +51,7 @@ export default {
     .selector {
       position: absolute;
       right: 0;
-      top: 8px;
+      top: 0;
 
       .primary--text {
         caret-color: white !important;
