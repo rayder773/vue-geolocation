@@ -8,7 +8,7 @@
           <div v-show="error">{{ error }}</div>
           <input v-model.trim="ip" class="dashboard-wrapper-input" />
           <button @click="getInfo">{{ $t("information") }}</button>
-                    <button @click="showInfo">Click</button>
+<!--          <button @click="showInfo">Click</button>-->
         </div>
         <div class="d-flex flex-column">
           <div>{{ $t("result") }}</div>
@@ -23,13 +23,35 @@
               </thead>
               <tbody>
                 <tr v-for="item in info" :key="item.ip">
-                  <td>{{ item.ip}}</td>
-                  <td>{{ item.continent}}</td>
-                  <td>{{ item.country}}</td>
+                  <td>{{ item.ip }}</td>
+                  <td>{{ item.continent }}</td>
+                  <td>{{ item.country }}</td>
                 </tr>
               </tbody>
             </template>
           </v-simple-table>
+        </div>
+        <div class="d-flex flex-column">
+          <div>{{ $t("history") }}</div>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">ip</th>
+                  <th class="text-left">continent</th>
+                  <th class="text-left">country</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, i) in history" :key="item.ip + i">
+                  <td>{{ item.ip }}</td>
+                  <td>{{ item.continent }}</td>
+                  <td>{{ item.country }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+          <button @click="cleanHistory">{{$t('history_clean')}}</button>
         </div>
       </div>
     </div>
@@ -38,6 +60,7 @@
 
 <script>
 import gql from "graphql-tag";
+import { mapState, mapMutations } from "vuex";
 
 const GET_GEO = gql`
   query($ip: String!) {
@@ -65,37 +88,15 @@ export default {
   props: {
     msg: String
   },
-  // apollo: {
-  //   info: {
-  //     query: GET_GEO,
-  //     manual: true,
-  //     variables() {
-  //       return {
-  //         ip: this.ip,
-  //       }
-  //     },
-  //     result ({ data }) {
-  //       console.log('hello')
-  //       this.info = data;
-  //       this.$apollo.queries.info.stop();
-  //     },
-  //     error (error) {
-  //       this.error = error;
-  //     },
-  //     watchLoading(isLoading) {
-  //       this.loading = isLoading;
-  //     },
-  //     skip: true,
-  //   }
-  // },
+  computed: mapState(["history"]),
   data: () => ({
     ip: "",
     info: [],
     loading: false,
-    error: "",
-
+    error: ""
   }),
   methods: {
+    ...mapMutations(["addToHistory", "cleanHistory"]),
     async getInfo() {
       this.info = [];
       await this.$apollo
@@ -106,17 +107,19 @@ export default {
           }
         })
         .then(({ data: { ipAddress } }) => {
-          console.log(ipAddress)
+          console.log(ipAddress);
           this.info.push({
             ip: this.ip,
             continent: ipAddress.country.continent.name,
-            country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`,
+            country: `${ipAddress.country.name}/${ipAddress.country.alpha2Code}`
           });
+          this.addToHistory(this.info);
+          // this.addToHistory(this.info);
         })
         .catch(err => (this.error = err));
     },
     showInfo() {
-      console.log(this.info);
+      console.log(this.history);
     }
   }
 };
@@ -146,6 +149,10 @@ export default {
     padding-left: 18px;
     outline: none;
     margin: 8px 0 18px;
+
+    &:focus {
+      border: 1px $color_fiolet solid;
+    }
   }
 
   button {
