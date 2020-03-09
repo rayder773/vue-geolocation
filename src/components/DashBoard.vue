@@ -146,7 +146,6 @@ export default {
           }
         })
         .then(({ data: { ipAddress } }) => {
-          console.log(ipAddress);
           this.info = {
             ip: this.ip,
             continent: ipAddress.country.continent
@@ -166,7 +165,6 @@ export default {
           this.loading = false;
         })
         .catch(err => {
-          console.log(err);
           this.error = err;
           this.loading = false;
         });
