@@ -6,13 +6,13 @@ import store from "./store";
 // import { createProvider } from "./vue-apollo";
 import VueApollo from "vue-apollo";
 import i18n from "./i18n";
-import Vuelidate from "vuelidate";
-import vuetify from "./plugins/vuetify";
+// import Vuelidate from "vuelidate";
+// import vuetify from "./plugins/vuetify";
 import ApolloClient from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 
-Vue.use(Vuelidate);
+// Vue.use(Vuelidate);
 Vue.use(VueApollo);
 Vue.config.productionTip = false;
 
@@ -46,6 +46,6 @@ new Vue({
   // apolloProvider: createProvider(),
   i18n,
   apolloProvider,
-  vuetify,
+  // vuetify,
   render: h => h(App)
 }).$mount("#app");

@@ -15,74 +15,63 @@
               class="dashboard-wrapper-input"
               :style="{ borderColor: error && '#FF6C6C' }"
             />
-            <v-progress-circular
-              indeterminate
-              color="primary"
-              class="ml-6"
-              v-show="loading"
-            ></v-progress-circular>
           </div>
-
           <button @click="getInfo">{{ $t("information") }}</button>
         </div>
         <div class="d-flex flex-column dashboard-wrapper-block">
           <div class="dashboard-wrapper-header">{{ $t("result") }}</div>
-          <v-simple-table>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left">{{ $t("ip") }}</th>
-                  <th class="text-left">{{ $t("continent") }}</th>
-                  <th class="text-left">{{ $t("country") }}</th>
-                  <th class="text-left">{{ $t("city") }}</th>
-                  <th class="text-left">{{ $t("postalIndex") }}</th>
-                  <th class="text-left">{{ $t("coordinates") }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{ !info.ip || error ? "-" : info.ip }}</td>
-                  <td>{{ !info.continent || error ? "-" : info.continent }}</td>
-                  <td>{{ !info.country || error ? "-" : info.country }}</td>
-                  <td>{{ !info.city || error ? "-" : info.city }}</td>
-                  <td>
-                    {{ !info.postalCode || error ? "-" : info.postalCode }}
-                  </td>
-                  <td>
-                    {{ !info.coordinates || error ? "-" : info.coordinates }}
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
+          <table>
+            <thead>
+              <tr>
+                <th class="text-left">{{ $t("ip") }}</th>
+                <th class="text-left">{{ $t("continent") }}</th>
+                <th class="text-left">{{ $t("country") }}</th>
+                <th class="text-left">{{ $t("city") }}</th>
+                <th class="text-left">{{ $t("postalIndex") }}</th>
+                <th class="text-left">{{ $t("coordinates") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ !info.ip || error ? "-" : info.ip }}</td>
+                <td>{{ !info.continent || error ? "-" : info.continent }}</td>
+                <td>{{ !info.country || error ? "-" : info.country }}</td>
+                <td>{{ !info.city || error ? "-" : info.city }}</td>
+                <td>
+                  {{ !info.postalCode || error ? "-" : info.postalCode }}
+                </td>
+                <td>
+                  {{ !info.coordinates || error ? "-" : info.coordinates }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="d-flex flex-column" style="max-width: 396px">
           <div class="dashboard-wrapper-header">{{ $t("history") }}</div>
-          <v-simple-table>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left">{{ $t("ip") }}</th>
-                  <th class="text-left">{{ $t("country") }}</th>
-                  <th class="text-left">{{ $t("city") }}</th>
-                </tr>
-              </thead>
-              <tbody v-if="history.length">
-                <tr v-for="(item, i) in history" :key="item.ip + i">
-                  <td>{{ item.ip }}</td>
-                  <td>{{ item.continent }}</td>
-                  <td>{{ item.country }}</td>
-                </tr>
-              </tbody>
-              <tbody v-else>
-                <tr>
-                  <td>{{ historyInitial.ip }}</td>
-                  <td>-</td>
-                  <td>-</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
+          <table>
+            <thead>
+              <tr>
+                <th class="text-left">{{ $t("ip") }}</th>
+                <th class="text-left">{{ $t("country") }}</th>
+                <th class="text-left">{{ $t("city") }}</th>
+              </tr>
+            </thead>
+            <tbody v-if="history.length">
+              <tr v-for="(item, i) in history" :key="item.ip + i">
+                <td>{{ item.ip }}</td>
+                <td>{{ item.continent }}</td>
+                <td>{{ item.country }}</td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr>
+                <td>{{ historyInitial.ip }}</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
           <button
             @click="cleanHistory"
             :disabled="!history.length"

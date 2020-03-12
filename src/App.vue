@@ -1,10 +1,12 @@
 <template>
-  <v-app>
+<!--  <v-app>-->
+  <div>
     <Header />
-    <v-container>
+<!--    <v-container>-->
       <DashBoard />
-    </v-container>
-  </v-app>
+  </div>
+<!--    </v-container>-->
+<!--  </v-app>-->
 </template>
 
 <script>

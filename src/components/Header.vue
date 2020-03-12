@@ -3,13 +3,13 @@
     <div class="container header-selector-wrapper">
       <h2>GeoIP</h2>
       <div class="selector">
-        <v-select
-          :items="langs"
-          @change="changLang"
-          outlined
-          :value="this.$i18n.locale.toUpperCase()"
-        >
-        </v-select>
+<!--        <v-select-->
+<!--          :items="langs"-->
+<!--          @change="changLang"-->
+<!--          outlined-->
+<!--          :value="this.$i18n.locale.toUpperCase()"-->
+<!--        >-->
+<!--        </v-select>-->
       </div>
     </div>
   </div>
