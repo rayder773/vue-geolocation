@@ -2,7 +2,7 @@
   <div class="dashboard">
     <div class="container">
       <div class="dashboard-wrapper">
-        <div class="d-flex flex-column dashboard-wrapper-block">
+        <div class="dashboard-wrapper-block">
           <div class="dashboard-wrapper-label-container">
             <div>{{ $t("ip") }}</div>
             <div v-show="error" class="dashboard-wrapper-label-container-error">
@@ -12,15 +12,18 @@
           <div class="d-flex align-center">
             <input
               v-model.trim="ip"
+              placeholder="000.000.00.00"
               class="dashboard-wrapper-input"
               :style="{ borderColor: error && '#FF6C6C' }"
             />
           </div>
-          <button @click="getInfo">{{ $t("information") }}</button>
+          <button class="dashboard-button" @click="getInfo">
+            {{ $t("information") }}
+          </button>
         </div>
         <div class="d-flex flex-column dashboard-wrapper-block">
           <div class="dashboard-wrapper-header">{{ $t("result") }}</div>
-          <table>
+          <table style="">
             <thead>
               <tr>
                 <th class="text-left">{{ $t("ip") }}</th>
@@ -173,8 +176,13 @@ export default {
   margin: 57px auto 0;
   padding: 48px;
 
+  @media screen and (max-width: 990px) {
+    margin: 57px 30px 0;
+  }
+
   &-header {
-    margin-bottom: 8px;
+    margin-bottom: 16px;
+    font-size: 18px;
   }
 
   &-block {
@@ -186,6 +194,9 @@ export default {
     justify-content: flex-start;
     flex-direction: row;
     align-items: center;
+    div {
+      font-size: 18px;
+    }
 
     &-error {
       margin-left: 8px;
@@ -228,38 +239,68 @@ export default {
     border-radius: 8px;
     color: white;
     outline: none;
+    border: none;
+    width: 100%;
 
     &:hover {
       background: $color_red_hover;
     }
   }
 
-  .v-data-table {
-    &__wrapper {
-      border-radius: 8px;
-    }
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    color: white;
+    font-size: 12px;
 
-    table {
-      border: 1px solid $color_border;
-      box-sizing: border-box;
-      border-radius: 8px;
-    }
-
-    thead {
-      background: $color_fiolet;
+    thead tr {
+      height: 34px;
     }
 
     td {
-      border-right: 1px solid $color_border;
+      height: 38px;
       color: #969696;
       text-align: center;
-      &:last-child {
+    }
+
+    tr {
+      th,
+      td {
+        border-right: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc;
+        padding: 5px;
+      }
+
+      td:first-child {
+        border-left: 1px solid #cccccc;
+      }
+
+      th {
+        text-align: center;
+        background: $color_fiolet;
         border: none;
       }
-    }
-    th {
-      text-align: center !important;
-      color: white !important;
+
+      &:first-child th {
+        &:first-child {
+          border-top-left-radius: 8px;
+        }
+
+        &:last-child {
+          border-top-right-radius: 8px;
+        }
+      }
+
+      &:last-child td {
+        &:first-child {
+          border-bottom-left-radius: 8px;
+        }
+
+        &:last-child {
+          border-bottom-right-radius: 8px;
+        }
+      }
     }
   }
 }

@@ -6,9 +6,10 @@
         <span @click="onHandleSelect" class="selector-active">{{
           active_lang
         }}</span>
+        <div class="selector-arrow" :class="isOpen && 'rotate'"></div>
         <ul class="selector-list" v-show="isOpen">
           <li v-for="lang in langs" :key="lang" @click="changLang(lang)">
-            {{ lang }}
+            <span :class="lang === active_lang && 'active'">{{ lang }}</span>
           </li>
         </ul>
       </div>
@@ -58,12 +59,17 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 40px;
+  color: white;
 
   &-selector-wrapper {
     max-width: 936px;
     position: relative;
     width: 100%;
     text-align: center;
+    h2 {
+      font-weight: 800;
+    }
   }
 
   .selector {
@@ -71,16 +77,52 @@ export default {
     right: 0;
     top: 4px;
 
-    &-list {
-      position: absolute;
+    &-active {
+      cursor: pointer;
     }
 
-    &:focus-within {
-      color: red;
-      /*.selector-list{*/
-      /*  display: initial;*/
-      /*}*/
+    &-arrow {
+      content: "";
+      display: inline;
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 6px solid white;
+      transition: all 0.2s ease-in;
+      top: 4px;
+      left: 25px;
     }
+
+    &-list {
+      position: absolute;
+      left: 0;
+      top: 24px;
+      list-style: none;
+      width: 56px;
+      height: 92px;
+      background: #ffffff;
+      box-shadow: 0px 20px 50px rgba(229, 229, 229, 0.8);
+      border-radius: 8px;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      font-size: 18px;
+
+      li {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .rotate {
+    transform: rotate(180deg);
+  }
+
+  .active {
+    color: $color_fiolet;
   }
 }
 </style>
