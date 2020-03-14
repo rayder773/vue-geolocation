@@ -1,4 +1,6 @@
-# vue-dzen
+# vue-geolocation
+
+demo - https://geolocation-vue.netlify.com/
 
 ## Project setup
 ```
